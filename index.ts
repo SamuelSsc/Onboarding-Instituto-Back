@@ -1,4 +1,3 @@
-import "reflect-metadata"; //ver se é aqui msm
 const { ApolloServer, gql } = require("apollo-server");
 
 const typeDefs = gql`
