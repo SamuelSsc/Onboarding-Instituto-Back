@@ -18,4 +18,4 @@ testdb:
   environment:
     - POSTGRES_USER=SamuelSsc
     - POSTGRES_PASSWORD=1234qwer
-    - POSTGRES_DB=users
+    - POSTGRES_DB=users_test
