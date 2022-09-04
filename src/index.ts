@@ -15,6 +15,7 @@ const typeDefs = gql`
     id: Int
     name: String!
     email: String!
+    birthDate: String!
   }
 
   type Query {
@@ -22,7 +23,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createUser(data: UserInput!): String
+    createUser(data: UserInput!): User
   }
 `;
 
@@ -32,8 +33,13 @@ const resolvers = {
   },
   Mutation: {
     createUser: (parent, args) => {
-      const data = { id: 1, name: args.data.name, email: args.data.email };
-      return `Usuario criado ${data.name}`;
+      const data = {
+        id: 1,
+        name: args.data.name,
+        email: args.data.email,
+        birthDate: args.data.birthDate,
+      };
+      return data;
     },
   },
 };
