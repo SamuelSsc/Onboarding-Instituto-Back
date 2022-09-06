@@ -34,13 +34,16 @@ const resolvers = {
   },
   Mutation: {
     createUser: async (parent, args) => {
-      /^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/.test(args.data.password) ||
-        console.log(
+      if (!/^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/.test(args.data.password))
+        throw new Error(
           "A senha deve possuir ao menos 6 caracteres, com 1 letra e 1 numero"
-          // ver como lançar erro como resposta
         );
 
-      // const validationEmail =
+      const isEmailAlreadyExist = await AppDataSource.manager.findBy(User, {
+        email: args.data.email,
+      });
+      if (!!isEmailAlreadyExist)
+        throw new Error("Este email já esta cadastrado");
 
       const user = new User();
       user.name = args.data.name;
