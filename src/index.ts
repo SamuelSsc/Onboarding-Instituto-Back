@@ -3,6 +3,7 @@ import { AppDataSource } from "./data-source";
 
 import { ApolloServer, gql } from "apollo-server";
 import { User } from "./entity/User";
+import * as bcrypt from "bcrypt";
 
 const typeDefs = gql`
   input UserInput {
@@ -42,14 +43,17 @@ const resolvers = {
       const isEmailAlreadyExist = await AppDataSource.manager.findBy(User, {
         email: args.data.email,
       });
-      if (!!isEmailAlreadyExist)
+      if (isEmailAlreadyExist.length > 0)
         throw new Error("Este email já esta cadastrado");
+
+      const SALT_ROUNDS = 10;
+      const passwordHashed = await bcrypt.hash(args.data.password, SALT_ROUNDS);
 
       const user = new User();
       user.name = args.data.name;
       user.email = args.data.email;
       user.birthDate = args.data.birthDate;
-      user.password = args.data.password;
+      user.password = passwordHashed;
       await AppDataSource.manager.save(user);
 
       return user;
