@@ -1,3 +1,4 @@
+import axios from "axios";
 import { setupServer } from "../setup";
 
 before(async () => {
@@ -6,6 +7,15 @@ before(async () => {
 
 describe("Query hello", () => {
   it("should return hello word", async () => {
-    console.log("Iniciou o teste, testando...");
+    const query = `
+        query Hello {
+          hello
+        }
+      `;
+
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query,
+    });
+    console.log(response.data);
   });
 });
