@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { ApolloServer, gql } from "apollo-server";
 import { AppDataSource } from "./data-source";
 import { User } from "./entity/User";
