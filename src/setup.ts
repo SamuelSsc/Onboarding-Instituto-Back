@@ -35,9 +35,8 @@ export async function setupServer() {
     },
     Mutation: {
       createUser: async (parent, args) => {
-        if (
-          !/^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/.test(args.data.password)
-        )
+        const VALIDATOR_PASSWORD = /^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/;
+        if (!VALIDATOR_PASSWORD.test(args.data.password))
           throw new Error(
             "A senha deve possuir ao menos 6 caracteres, com 1 letra e 1 numero"
           );
@@ -45,14 +44,11 @@ export async function setupServer() {
         const isEmailAlreadyExist = await AppDataSource.manager.findBy(User, {
           email: args.data.email,
         });
-        if (isEmailAlreadyExist.length > 0)
+        if (!!isEmailAlreadyExist.length)
           throw new Error("Este email já esta cadastrado");
 
-        const SALT_ROUNDS = 10;
-        const passwordHashed = await bcrypt.hash(
-          args.data.password,
-          SALT_ROUNDS
-        );
+        const ROUNDS = 10;
+        const passwordHashed = await bcrypt.hash(args.data.password, ROUNDS);
 
         const user = new User();
         user.name = args.data.name;
