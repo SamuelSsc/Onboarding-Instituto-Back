@@ -21,3 +21,15 @@ export async function setup() {
   await setupConnection();
   await setupServer();
 }
+
+async function setupConnection() {
+  console.log("Starting conect DB!");
+  const dataSource = createConnection();
+  dataSource.initialize();
+  console.log("Conected...!");
+}
+
+export async function setup() {
+  await setupConnection();
+  await setupServer();
+}
