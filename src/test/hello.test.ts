@@ -2,20 +2,20 @@ import axios from "axios";
 import { expect } from "chai";
 
 describe("Query hello", () => {
-  const EXPECTED_RESPONSE = { data: { hello: "Hello Word!" } };
-  it("should return hello word", async () => {
-    const query = `
+  const query = `
         query Hello {
           hello
         }
       `;
+  it("should return hello word", async () => {
+    const urlDB = "http://localhost:4000//graphql";
 
-    const response = await axios.post("http://localhost:4000/graphql", {
+    const response = await axios.post(urlDB, {
       query,
     });
 
-    console.log(response.data);
+    const expectedResponse = { data: { hello: "Hello Word!" } };
     expect(response.status).to.equal(200);
-    expect(response.data).to.be.deep.eq(EXPECTED_RESPONSE);
+    expect(response.data).to.be.deep.eq(expectedResponse);
   });
 });
