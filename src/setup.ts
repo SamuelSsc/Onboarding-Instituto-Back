@@ -1,13 +1,24 @@
 import "reflect-metadata";
-import { ApolloServer, gql } from "apollo-server";
-import { AppDataSource } from "./data-source";
+import { ApolloServer } from "apollo-server";
 import { resolvers, typeDefs } from "./schema";
+import { createConnection } from "./data-source";
 
-export async function setupServer() {
+async function setupServer() {
   const port = 4000;
-  AppDataSource.initialize();
 
   const app = new ApolloServer({ typeDefs, resolvers });
   await app.listen(port);
   console.info(`Server executing on port ${port}`);
+}
+
+async function setupConnection() {
+  console.log("Starting conect DB!");
+  const dataSource = createConnection();
+  dataSource.initialize();
+  console.log("Conected...!");
+}
+
+export async function setup() {
+  await setupConnection();
+  await setupServer();
 }

@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import { setupServer } from "./setup";
+import { setup } from "./setup";
 
 dotenv.config();
-setupServer();
+setup();
