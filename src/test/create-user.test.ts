@@ -14,7 +14,7 @@ describe("Mutation createUser", () => {
 
   const VARIABLES = {
     name: "Samuel Teste passando os dados",
-    email: "SamuelTeste12@gmail.com",
+    email: "SamuelTeste@gmail.com",
     birthDate: "21/02/2002",
     password: "1234qwer",
   };
@@ -29,8 +29,17 @@ describe("Mutation createUser", () => {
       query: mutation,
     });
 
-    console.log(response.data, response.status);
+    const expectedResponse = {
+      data: {
+        createUser: {
+          id: 2,
+          email: "SamuelTeste@gmail.com",
+          name: "Samuel Teste passando os dados",
+          birthDate: "21/02/2002",
+        },
+      },
+    };
     expect(response.status).to.equal(200);
-    // expect(response.data).to.be.deep.eq(EXPECTED_RESPONSE);
+    expect(response.data).to.be.deep.eq(expectedResponse);
   });
 });
