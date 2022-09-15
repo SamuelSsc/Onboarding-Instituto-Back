@@ -1,8 +1,6 @@
-import { createConnection } from "../data-source";
+import { AppDataSource, createConnection } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
-
-const dataSource = createConnection();
 
 export const resolvers = {
   Query: {
@@ -16,7 +14,7 @@ export const resolvers = {
           "A senha deve possuir ao menos 6 caracteres, com 1 letra e 1 numero"
         );
 
-      const isEmailAlreadyExist = await dataSource.manager.findBy(User, {
+      const isEmailAlreadyExist = await AppDataSource.manager.findBy(User, {
         email: args.data.email,
       });
       if (!!isEmailAlreadyExist.length)
@@ -30,7 +28,7 @@ export const resolvers = {
       user.email = args.data.email;
       user.birthDate = args.data.birthDate;
       user.password = passwordHashed;
-      await dataSource.manager.save(user);
+      await AppDataSource.manager.save(user);
 
       return user;
     },

@@ -2,8 +2,10 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./entity/User";
 
+export let AppDataSource: DataSource;
+
 export function createConnection() {
-  const AppDataSource = new DataSource({
+  AppDataSource = new DataSource({
     type: "postgres",
     host: "localhost",
     url: process.env.DB_URL,
@@ -13,6 +15,4 @@ export function createConnection() {
     migrations: [],
     subscribers: [],
   });
-
-  return AppDataSource;
 }
