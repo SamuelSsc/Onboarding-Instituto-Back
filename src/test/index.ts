@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import { setup } from "../setup";
 
 before(async () => {
