@@ -2,14 +2,13 @@ import axios from "axios";
 import { expect } from "chai";
 
 describe("Query hello", () => {
+  const urlDB = "http://localhost:4000//graphql";
   const query = `
         query Hello {
           hello
         }
       `;
   it("should return hello word", async () => {
-    const urlDB = "http://localhost:4000//graphql";
-
     const response = await axios.post(urlDB, {
       query,
     });
