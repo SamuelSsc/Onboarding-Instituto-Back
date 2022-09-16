@@ -57,4 +57,5 @@ describe("Mutation createUser", () => {
     expect(passwordCompare).to.be.deep.eq(true);
     await dataSource.query(`DELETE FROM "user" WHERE id = ${userCreated.id}`);
   });
+  //Criar outros tests (its) para ver casos de erros
 });
