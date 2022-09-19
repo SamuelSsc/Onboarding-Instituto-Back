@@ -35,6 +35,11 @@ export const typeDefs = gql`
     token: String!
   }
 
+  type Login {
+    user: User!
+    token: String!
+  }
+
   type Mutation {
     createUser(data: UserInput!): User
     login(data: LoginInput!): Login
