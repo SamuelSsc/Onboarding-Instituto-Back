@@ -11,7 +11,10 @@ export const typeDefs = gql`
   input LoginInput {
     email: String!
     password: String!
+<<<<<<< HEAD
     rememberMe: Boolean!
+=======
+>>>>>>> 44683d6 (created login-mutation)
   }
 
   type User {
