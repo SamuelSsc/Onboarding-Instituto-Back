@@ -34,5 +34,28 @@ export const resolvers = {
 
       return user;
     },
+
+    login: async (parent, args) => {
+      const userLogin = new User();
+      userLogin.email = args.data.email;
+      userLogin.password = args.data.password;
+
+      const user = await dataSource.findOneBy(User, {
+        email: args.data.email,
+      });
+      const isUserPassword = await bcrypt.compare(
+        userLogin.password,
+        user.password
+      );
+      if (!isUserPassword)
+        throw new CustomError(
+          "Credenciais invalidas, por favor verifique email e senha.",
+          401
+        );
+
+      const token = "Bearer d4as65ad654s65asd4..65asd";
+
+      return { user, token };
+    },
   },
 };
