@@ -2,6 +2,7 @@ import { dataSource } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import { CustomError } from "../errors";
+import * as jwt from "jsonwebtoken";
 
 export const resolvers = {
   Query: {
@@ -39,21 +40,35 @@ export const resolvers = {
       const userLogin = new User();
       userLogin.email = args.data.email;
       userLogin.password = args.data.password;
+      const UnauthorizedError = {
+        message: "Credenciais invalidas, por favor verifique email e senha.",
+        code: 401,
+      };
 
       const user = await dataSource.findOneBy(User, {
         email: args.data.email,
       });
+      if (user === null)
+        throw new CustomError(
+          UnauthorizedError.message,
+          UnauthorizedError.code
+        );
+
       const isUserPassword = await bcrypt.compare(
         userLogin.password,
         user.password
       );
-      if (!isUserPassword)
+      let token: string;
+      if (isUserPassword) {
+        token = jwt.sign({ userName: user.name }, "supersecret", {
+          expiresIn: 120,
+        });
+      } else {
         throw new CustomError(
-          "Credenciais invalidas, por favor verifique email e senha.",
-          401
+          UnauthorizedError.message,
+          UnauthorizedError.code
         );
-
-      const token = "Bearer d4as65ad654s65asd4..65asd";
+      }
 
       return { user, token };
     },
