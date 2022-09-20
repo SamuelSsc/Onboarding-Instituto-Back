@@ -18,6 +18,10 @@ export const typeDefs = gql`
     id: Int!
   }
 
+  input UserInfo {
+    id: Int!
+  }
+
   type User {
     id: Int
     name: String!
@@ -28,11 +32,14 @@ export const typeDefs = gql`
   type Query {
     hello: String
     user(data: UserInfo!): User
+<<<<<<< HEAD
   }
 
   type Login {
     user: User!
     token: String!
+=======
+>>>>>>> 1a6ff2f (create query)
   }
 
   type Mutation {
