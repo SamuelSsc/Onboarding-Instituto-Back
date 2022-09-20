@@ -9,7 +9,26 @@ export const resolvers = {
     hello: () => "Hello Word!",
   },
   Mutation: {
-    createUser: async (parent, args) => {
+    createUser: async (
+      parent,
+      args: {
+        data: {
+          name: string;
+          email: string;
+          password: string;
+          birthDate: string;
+        };
+      },
+      context: { token: string }
+    ) => {
+      jwt.verify(context.token, process.env.TOKEN_KEY, function (err) {
+        if (!!err) {
+          throw new CustomError(
+            "Token invalido ou não encontrado, por favor refaça o Login para ter permissão de criar um novo usuário.",
+            401
+          );
+        }
+      });
       const regex = /^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/;
       if (!regex.test(args.data.password))
         throw new CustomError(
