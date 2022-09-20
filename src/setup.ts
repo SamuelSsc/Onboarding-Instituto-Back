@@ -7,7 +7,13 @@ export let app: ApolloServer;
 async function setupServer() {
   const port = 4000;
 
-  app = new ApolloServer({ typeDefs, resolvers });
+  app = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => ({
+      token: req.headers.authorization,
+    }),
+  });
   await app.listen(port);
   console.info(`Server executing on port ${port}`);
 }
