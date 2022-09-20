@@ -40,6 +40,7 @@ export const resolvers = {
       const userLogin = new User();
       userLogin.email = args.data.email;
       userLogin.password = args.data.password;
+      const isRememberMe = args.data.rememberMe;
       const UnauthorizedError = {
         message: "Credenciais invalidas, por favor verifique email e senha.",
         code: 401,
@@ -60,8 +61,8 @@ export const resolvers = {
       );
       let token: string;
       if (isUserPassword) {
-        token = jwt.sign({ userName: user.name }, "supersecret", {
-          expiresIn: 120,
+        token = jwt.sign({ userName: user.name }, process.env.TOKEN_KEY, {
+          expiresIn: isRememberMe ? "7d" : "3h",
         });
       } else {
         throw new CustomError(
