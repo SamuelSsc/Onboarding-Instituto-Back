@@ -21,6 +21,10 @@ export const typeDefs = gql`
 >>>>>>> 38f1bcd (adjusting key-token and added remember-me)
   }
 
+  input UserInfo {
+    id: Int!
+  }
+
   type User {
     id: Int
     name: String!
@@ -30,6 +34,7 @@ export const typeDefs = gql`
 
   type Query {
     hello: String
+    user(data: UserInfo!): User
   }
 
   type Login {

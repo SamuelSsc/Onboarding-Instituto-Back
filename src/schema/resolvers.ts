@@ -7,6 +7,17 @@ import * as jwt from "jsonwebtoken";
 export const resolvers = {
   Query: {
     hello: () => "Hello Word!",
+    user: async (parent, args) => {
+      const user = await dataSource.findOneBy(User, {
+        id: args.data.id,
+      });
+
+      if (user === null) {
+        throw new CustomError("User not found", 400);
+      }
+
+      return user;
+    },
   },
   Mutation: {
     createUser: async (
