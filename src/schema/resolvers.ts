@@ -80,7 +80,7 @@ export const resolvers = {
       );
       let token: string;
       if (isUserPassword) {
-        token = jwt.sign({ userName: user.name }, process.env.TOKEN_KEY, {
+        token = jwt.sign({ userId: user.id }, process.env.TOKEN_KEY, {
           expiresIn: isRememberMe ? "7d" : "3h",
         });
       } else {

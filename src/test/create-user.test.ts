@@ -4,6 +4,7 @@ import { dataSource } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import { CreateUser } from "../utils/create-user";
+import * as jwt from "jsonwebtoken";
 
 describe("Mutation createUser", () => {
   afterEach(async function () {
@@ -35,14 +36,23 @@ describe("Mutation createUser", () => {
     password: string;
   };
   const urlDB = "http://localhost:4000/graphql";
+  const token = jwt.sign({ userId: 1 }, process.env.TOKEN_KEY);
 
   it("should return createUser", async () => {
-    const response = await axios.post(urlDB, {
-      variables: {
-        data: input,
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: mutation,
       },
-      query: mutation,
-    });
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
     const userDb = await dataSource.findOneBy(User, {
       email: input.email,
     });
@@ -72,12 +82,20 @@ describe("Mutation createUser", () => {
   it("should return email already exist", async () => {
     await CreateUser(input);
 
-    const response = await axios.post(urlDB, {
-      variables: {
-        data: input,
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: mutation,
       },
-      query: mutation,
-    });
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
 
     const expectedResponse = {
       message: "Este email já esta cadastrado",
@@ -89,15 +107,52 @@ describe("Mutation createUser", () => {
     );
   });
 
+  it("should return invalid or not found token", async () => {
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: "InvalidToken",
+        },
+      }
+    );
+
+    const espectedResponse = {
+      message:
+        "Token invalido ou não encontrado, por favor refaça o Login para ter permissão de criar um novo usuário.",
+      code: 401,
+    };
+    expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
+      espectedResponse.code
+    );
+    expect(response.data.errors[0].message).to.be.deep.eq(
+      espectedResponse.message
+    );
+  });
+
   it("should return invalid password format", async () => {
     input.password = "123";
 
-    const response = await axios.post(urlDB, {
-      variables: {
-        data: input,
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: mutation,
       },
-      query: mutation,
-    });
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
 
     const expectedResponse = {
       message:
