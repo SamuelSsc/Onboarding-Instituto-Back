@@ -16,6 +16,7 @@ export const typeDefs = gql`
 
   input UserInfo {
     id: Int!
+    rememberMe: Boolean!
   }
 
   type User {
