@@ -1,5 +1,6 @@
 {
    "dependencies": {
+      "@faker-js/faker": "^7.5.0",
       "@types/bcrypt": "5.0.0",
       "apollo-server": "3.10.1",
       "axios": "0.27.2",
@@ -28,7 +29,7 @@
       "start": "ts-node src/index.ts",
       "start:dev": "ts-node-dev --respawn --transpile-only src/index.ts",
       "test": "env TEST=true mocha -r ts-node/register src/test/index.ts",
-      "seed": "",
+      "seed": "ts-node-dev src/seed/index.ts",
       "typeorm": "typeorm-ts-node-commonjs"
    }
 }
