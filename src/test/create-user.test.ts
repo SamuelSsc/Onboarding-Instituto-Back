@@ -35,10 +35,7 @@ describe("Mutation createUser", () => {
     birthDate: string;
     password: string;
   };
-<<<<<<< HEAD
   const urlDB = "http://localhost:4000/graphql";
-=======
->>>>>>> 01e9f0b (create login tests and token test)
   const token = jwt.sign({ userId: 1 }, process.env.TOKEN_KEY);
 
   it("should return createUser", async () => {
@@ -86,13 +83,9 @@ describe("Mutation createUser", () => {
   });
 
   it("should return email already exist", async () => {
-<<<<<<< HEAD
     await CreateUser(input);
 
     const response = await axios.post(
-=======
-    await axios.post(
->>>>>>> 01e9f0b (create login tests and token test)
       urlDB,
       {
         variables: {
@@ -106,23 +99,6 @@ describe("Mutation createUser", () => {
         },
       }
     );
-<<<<<<< HEAD
-=======
-    const response = await axios.post(
-      urlDB,
-      {
-        variables: {
-          data: input,
-        },
-        query: mutation,
-      },
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
->>>>>>> 01e9f0b (create login tests and token test)
 
     const expectedResponse = {
       message: "Este email já esta cadastrado",
