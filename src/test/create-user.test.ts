@@ -1,6 +1,6 @@
 import axios from "axios";
 import { expect } from "chai";
-import { dataSource } from "../data-source";
+import { ClearDb, dataSource } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import { CreateUser } from "../utils/create-user";
@@ -8,7 +8,7 @@ import * as jwt from "jsonwebtoken";
 
 describe("Mutation createUser", () => {
   afterEach(async function () {
-    await dataSource.query('TRUNCATE TABLE "user"');
+    await ClearDb();
   });
 
   beforeEach(async function () {

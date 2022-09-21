@@ -7,7 +7,11 @@ import * as jwt from "jsonwebtoken";
 export const resolvers = {
   Query: {
     hello: () => "Hello Word!",
-    user: async (parent, args, context: { token: string }) => {
+    user: async (
+      parent,
+      args: { data: { id: number } },
+      context: { token: string }
+    ) => {
       jwt.verify(context.token, process.env.TOKEN_KEY, function (err) {
         if (!!err) {
           throw new CustomError(
