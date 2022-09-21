@@ -1,12 +1,12 @@
 import axios from "axios";
 import { User } from "../entity/User";
-import { dataSource } from "../data-source";
-import * as bcrypt from "bcrypt";
+import { ClearDb, dataSource } from "../data-source";
 import { expect } from "chai";
 import * as jwt from "jsonwebtoken";
+import { CreateUser } from "../utils/create-user";
 
 afterEach(async function () {
-  await dataSource.query('TRUNCATE TABLE "user"');
+  await ClearDb();
 });
 
 describe("Query User", () => {
@@ -22,31 +22,20 @@ describe("Query User", () => {
         }
       `;
   const token = jwt.sign({ userId: 1 }, process.env.TOKEN_KEY);
+  const defaultUser = {
+    name: "Samuel Santana",
+    email: "Samuelssc5874@gmail.com",
+    birthDate: "21/2002",
+    password: "1234qwer",
+  };
   let input = {
     id: 1,
   };
-  async function CreateUser() {
-    const defaultUser = {
-      name: "Samuel Santana",
-      email: "Samuelssc5874@gmail.com",
-      birthDate: "21/2002",
-      password: "1234qwer",
-    };
-
-    const ROUNDS = 10;
-    const passwordHashed = await bcrypt.hash(defaultUser.password, ROUNDS);
-    const user = new User();
-    user.name = defaultUser.name;
-    user.email = defaultUser.email;
-    user.birthDate = defaultUser.birthDate;
-    user.password = passwordHashed;
-    await dataSource.save(user);
-  }
 
   it("should return user", async () => {
-    await CreateUser();
+    await CreateUser(defaultUser);
     const userDB = await dataSource.findOneBy(User, {
-      email: "Samuelssc5874@gmail.com",
+      email: defaultUser.email,
     });
     input.id = userDB.id;
     const response = await axios.post(
@@ -79,7 +68,7 @@ describe("Query User", () => {
   });
 
   it("should return user not found", async () => {
-    await CreateUser();
+    await CreateUser(defaultUser);
     input.id = Math.floor(Math.random() * 65536);
     const response = await axios.post(
       urlDB,
@@ -109,9 +98,9 @@ describe("Query User", () => {
   });
 
   it("should return invalid or not found token", async () => {
-    await CreateUser();
+    await CreateUser(defaultUser);
     const userDB = await dataSource.findOneBy(User, {
-      email: "Samuelssc5874@gmail.com",
+      email: defaultUser.email,
     });
     input.id = userDB.id;
     const response = await axios.post(
