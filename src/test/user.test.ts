@@ -69,7 +69,7 @@ describe("Query User", () => {
 
   it("should return user not found", async () => {
     await CreateUser(defaultUser);
-    input.id = Math.floor(Math.random() * 65536);
+    input.id = 0;
     const response = await axios.post(
       urlDB,
       {
