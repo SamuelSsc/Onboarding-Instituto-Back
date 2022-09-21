@@ -107,4 +107,37 @@ describe("Query User", () => {
       expectedResponse.message
     );
   });
+
+  it("should return invalid or not found token", async () => {
+    await CreateUser();
+    const userDB = await dataSource.findOneBy(User, {
+      email: "Samuelssc5874@gmail.com",
+    });
+    input.id = userDB.id;
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: query,
+      },
+      {
+        headers: {
+          Authorization: "TokenInvalid",
+        },
+      }
+    );
+    const expectedResponse = {
+      message:
+        "Token invalido ou não encontrado, você não possui permissão para ver as informações do usuario.",
+      code: 401,
+    };
+    expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
+      expectedResponse.code
+    );
+    expect(response.data.errors[0].message).to.be.deep.eq(
+      expectedResponse.message
+    );
+  });
 });
