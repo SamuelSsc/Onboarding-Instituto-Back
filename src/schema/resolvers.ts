@@ -30,7 +30,49 @@ export const resolvers = {
 
       return user;
     },
+
+    users: async (
+      parent,
+      args: { data: { limit: number; offset: number } },
+      context: { token: string }
+    ) => {
+      jwt.verify(context.token, process.env.TOKEN_KEY, function (err) {
+        if (!!err) {
+          throw new CustomError(
+            "Token invalido ou não encontrado, você não possui permissão para ver a lista de usuários.",
+            401
+          );
+        }
+      });
+
+      const DEFAULT_VALUES = {
+        limit: 10,
+        offset: 0,
+      };
+      const limit = args?.data?.limit ?? DEFAULT_VALUES.limit;
+      const offset = args?.data?.offset ?? DEFAULT_VALUES.offset;
+
+      const users = await dataSource.find(User, {
+        order: {
+          name: "ASC",
+        },
+        take: limit,
+        skip: offset,
+      });
+      const totalUsers = await dataSource.count(User);
+      const totalPages = Math.ceil(totalUsers / limit);
+      const FIRST_PAGE = 1;
+
+      const usersOutput = {
+        hasPreviousPage: offset > 0,
+        hasNextPage: !(limit * (totalPages - FIRST_PAGE) === offset),
+        users: users,
+        totalUsers: totalUsers,
+      };
+      return usersOutput;
+    },
   },
+
   Mutation: {
     createUser: async (
       parent,
