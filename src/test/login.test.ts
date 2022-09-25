@@ -3,7 +3,6 @@ import { User } from "../entity/User";
 import { dataSource } from "../data-source";
 import * as bcrypt from "bcrypt";
 import { expect } from "chai";
-import { toASCII } from "punycode";
 
 afterEach(async function () {
   await dataSource.query('TRUNCATE TABLE "user"');
@@ -80,15 +79,15 @@ describe("Mutation Login", () => {
       query: mutation,
     });
 
-    const espectedResponse = {
+    const expectedResponse = {
       message: "Credenciais invalidas, por favor verifique email e senha.",
       code: 401,
     };
     expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
-      espectedResponse.code
+      expectedResponse.code
     );
     expect(response.data.errors[0].message).to.be.deep.eq(
-      espectedResponse.message
+      expectedResponse.message
     );
   });
 });

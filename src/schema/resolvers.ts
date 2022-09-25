@@ -55,7 +55,16 @@ export const resolvers = {
       return user;
     },
 
-    login: async (parent, args) => {
+    login: async (
+      parent,
+      args: {
+        data: {
+          email: string;
+          password: string;
+          rememberMe: boolean;
+        };
+      }
+    ) => {
       const userLogin = new User();
       userLogin.email = args.data.email;
       userLogin.password = args.data.password;
