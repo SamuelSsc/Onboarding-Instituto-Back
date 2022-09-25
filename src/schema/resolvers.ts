@@ -63,6 +63,9 @@ export const resolvers = {
       const totalPages = Math.ceil(totalUsers / limit);
       const FIRST_PAGE = 1;
 
+      if (offset >= totalUsers)
+        throw new CustomError("Não há mais usuarios a serem listados", 404);
+
       const usersOutput = {
         hasPreviousPage: offset > 0,
         hasNextPage: !(limit * (totalPages - FIRST_PAGE) === offset),
