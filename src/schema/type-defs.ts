@@ -11,14 +11,7 @@ export const typeDefs = gql`
   input LoginInput {
     email: String!
     password: String!
-<<<<<<< HEAD
-<<<<<<< HEAD
     rememberMe: Boolean!
-=======
->>>>>>> 44683d6 (created login-mutation)
-=======
-    rememberMe: Boolean!
->>>>>>> 38f1bcd (adjusting key-token and added remember-me)
   }
 
   input UserInfo {
