@@ -4,11 +4,11 @@ import { dataSource } from "../data-source";
 import * as bcrypt from "bcrypt";
 import { expect } from "chai";
 
-afterEach(async function () {
-  await dataSource.query('TRUNCATE TABLE "user"');
-});
-
 describe("Mutation Login", () => {
+  afterEach(async function () {
+    await dataSource.query('TRUNCATE TABLE "user"');
+  });
+
   const mutation = `mutation login($data:LoginInput!){
   login(data:$data){
 	user{
@@ -69,8 +69,31 @@ describe("Mutation Login", () => {
     expect(response.data.data.login.user).to.be.deep.eq(expectedResponse);
   });
 
-  it("should return invalid credentials", async () => {
+  it("should return invalid credentials - password incorrect", async () => {
     input.password = "SenhaErrada";
+
+    const response = await axios.post(urlDB, {
+      variables: {
+        data: input,
+      },
+      query: mutation,
+    });
+
+    const expectedResponse = {
+      message: "Credenciais invalidas, por favor verifique email e senha.",
+      code: 401,
+    };
+    expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
+      expectedResponse.code
+    );
+    expect(response.data.errors[0].message).to.be.deep.eq(
+      expectedResponse.message
+    );
+  });
+
+  it("should return invalid credentials - email incorrect", async () => {
+    input.password = "1234qwer";
+    input.email = "emailerrado@gmail.com";
 
     const response = await axios.post(urlDB, {
       variables: {
