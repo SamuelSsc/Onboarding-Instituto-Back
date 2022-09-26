@@ -1,15 +1,25 @@
-import { CreateUser } from "../utils/create-user";
 import { faker } from "@faker-js/faker";
+import { dataSource } from "../data-source";
+import * as bcrypt from "bcrypt";
+import { User } from "../entity/User";
 
 export async function usersSeed() {
+  const users = [];
+  const ROUNDS = 10;
+
   for (let i = 0; i < 50; i++) {
-    const user = {
-      name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-      email: `${faker.internet.email()}`,
-      birthDate: `${faker.date.birthdate()}`,
-      password: "1234qwer",
-    };
-    CreateUser(user);
+    const user = new User();
+    user.name = `${faker.name.firstName()} ${faker.name.lastName()}`;
+    user.email = `${faker.internet.email()}`;
+    user.birthDate = `${faker.date.birthdate()}`;
+    user.password = await bcrypt.hash("1234qwer", ROUNDS);
+
+    users.push(user);
   }
-  console.info("Users Created!");
+  try {
+    await dataSource.save(users);
+    console.info("Users Created!");
+  } catch {
+    console.error("Error at create users");
+  }
 }
