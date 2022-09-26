@@ -1,54 +1,51 @@
 import axios from "axios";
 import { User } from "../entity/User";
 import { dataSource } from "../data-source";
-import * as bcrypt from "bcrypt";
 import { expect } from "chai";
+import { CreateUser } from "../utils/create-user";
 
 describe("Mutation Login", () => {
   afterEach(async function () {
     await dataSource.query('TRUNCATE TABLE "user"');
   });
 
-  const mutation = `mutation login($data:LoginInput!){
-  login(data:$data){
-	user{
-        id
-        name
-        email
-        birthDate
-    }
-    token
-  }
-}`;
-
-  let input = {
-    email: "Samuelssc5874@gmail.com",
-    password: "1234qwer",
-    rememberMe: true,
-  };
-
-  async function CreateUser() {
+  beforeEach(async function () {
     const defaultUser = {
       name: "Samuel Santana",
       email: "Samuelssc5874@gmail.com",
       birthDate: "21/2002",
       password: "1234qwer",
     };
+    await CreateUser(defaultUser);
+  });
 
-    const ROUNDS = 10;
-    const passwordHashed = await bcrypt.hash(defaultUser.password, ROUNDS);
-    const user = new User();
-    user.name = defaultUser.name;
-    user.email = defaultUser.email;
-    user.birthDate = defaultUser.birthDate;
-    user.password = passwordHashed;
-    await dataSource.save(user);
-  }
+  const mutation = `mutation login($data:LoginInput!){
+  login(data:$data){
+    user{
+          id
+          name
+          email
+          birthDate
+      }
+      token
+    }
+  }`;
+
+  let input: {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+  };
 
   const urlDB = "http://localhost:4000/graphql";
 
   it("should return login", async () => {
-    await CreateUser();
+    input = {
+      email: "Samuelssc5874@gmail.com",
+      password: "1234qwer",
+      rememberMe: true,
+    };
+
     const userDB = await dataSource.findOneBy(User, {
       email: input.email,
     });
