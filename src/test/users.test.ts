@@ -33,7 +33,7 @@ describe("Query Users", () => {
   let input: { limit: number; offset: number };
 
   it("should return users", async () => {
-    const token = jwt.sign({ userId: 1 }, process.env.TOKEN_KEY);
+    const token = jwt.sign({ userId: users[0].id }, process.env.TOKEN_KEY);
     input = {
       limit: 10,
       offset: 0,
@@ -53,9 +53,8 @@ describe("Query Users", () => {
       }
     );
 
-    // const expectedResponse = {};
-    console.log(response.data);
-    console.log(users[0]);
+    expect(response.status).to.be.deep.eq(200);
+    expect(response.data.data.users.totalUsers).to.be.deep.eq(25);
   });
 
   it("should return invalid or not found token, tokenInvalid", async () => {

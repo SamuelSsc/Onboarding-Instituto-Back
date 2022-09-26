@@ -7,7 +7,7 @@ export async function usersSeed() {
   const users = [];
   const ROUNDS = 10;
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 25; i++) {
     const user = new User();
     user.name = `${faker.name.firstName()} ${faker.name.lastName()}`;
     user.email = `${faker.internet.email()}`;
