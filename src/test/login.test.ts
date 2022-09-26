@@ -10,13 +10,7 @@ describe("Mutation Login", () => {
   });
 
   beforeEach(async function () {
-    const defaultUser = {
-      name: "Samuel Santana",
-      email: "Samuelssc5874@gmail.com",
-      birthDate: "21/2002",
-      password: "1234qwer",
-    };
-    await CreateUser(defaultUser);
+    await CreateUser({});
   });
 
   const mutation = `mutation login($data:LoginInput!){
