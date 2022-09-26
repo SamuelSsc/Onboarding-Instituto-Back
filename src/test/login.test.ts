@@ -1,12 +1,12 @@
 import axios from "axios";
 import { User } from "../entity/User";
-import { dataSource } from "../data-source";
+import { ClearDb, dataSource } from "../data-source";
 import { expect } from "chai";
 import { CreateUser } from "../utils/create-user";
 
 describe("Mutation Login", () => {
   afterEach(async function () {
-    await dataSource.query('TRUNCATE TABLE "user"');
+    await ClearDb();
   });
 
   beforeEach(async function () {

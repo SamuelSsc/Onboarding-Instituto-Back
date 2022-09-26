@@ -9,7 +9,7 @@ interface CreateUserProps {
   password?: string;
 }
 
-const defaultUser = {
+export const defaultUser = {
   name: "Samuel Santana",
   email: "Samuelssc5874@gmail.com",
   birthDate: "21/2002",

@@ -7,6 +7,29 @@ import * as jwt from "jsonwebtoken";
 export const resolvers = {
   Query: {
     hello: () => "Hello Word!",
+    user: async (
+      parent,
+      args: { data: { id: number } },
+      context: { token: string }
+    ) => {
+      jwt.verify(context.token, process.env.TOKEN_KEY, function (err) {
+        if (!!err) {
+          throw new CustomError(
+            "Token invalido ou não encontrado, você não possui permissão para ver as informações do usuario.",
+            401
+          );
+        }
+      });
+      const user = await dataSource.findOneBy(User, {
+        id: args.data.id,
+      });
+
+      if (user === null) {
+        throw new CustomError("Usuario não encontrado verifique o id", 404);
+      }
+
+      return user;
+    },
   },
   Mutation: {
     createUser: async (
