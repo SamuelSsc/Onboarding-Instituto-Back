@@ -4,11 +4,11 @@ import { dataSource } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 
-afterEach(async function () {
-  await dataSource.query('TRUNCATE TABLE "user"');
-});
-
 describe("Mutation createUser", () => {
+  afterEach(async function () {
+    await dataSource.query('TRUNCATE TABLE "user"');
+  });
+
   const mutation = `mutation CreateUser($data: UserInput!) {
         createUser(data: $data) {
           id
@@ -45,17 +45,19 @@ describe("Mutation createUser", () => {
       data: {
         createUser: {
           id: userDb.id,
-          email: "SamuelTeste1@gmail.com",
-          name: "Samuel Satana",
-          birthDate: "21/02/2002",
+          email: input.email,
+          name: input.name,
+          birthDate: input.birthDate,
         },
       },
     };
     expect(response.status).to.equal(200);
     expect(response.data).to.be.deep.eq(expectedResponse);
-    expect(userDb.name).to.be.deep.eq(input.name);
-    expect(userDb.email).to.be.deep.eq(input.email);
-    expect(userDb.birthDate).to.be.deep.eq(input.birthDate);
+    expect(userDb.name).to.be.deep.eq(expectedResponse.data.createUser.name);
+    expect(userDb.email).to.be.deep.eq(expectedResponse.data.createUser.email);
+    expect(userDb.birthDate).to.be.deep.eq(
+      expectedResponse.data.createUser.birthDate
+    );
     expect(passwordCompare).to.be.deep.eq(true);
   });
 
