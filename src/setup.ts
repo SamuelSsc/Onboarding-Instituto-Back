@@ -3,10 +3,11 @@ import { ApolloServer } from "apollo-server";
 import { resolvers, typeDefs } from "./schema";
 import { createConnection } from "./data-source";
 
+export let app: ApolloServer;
 async function setupServer() {
   const port = 4000;
 
-  const app = new ApolloServer({ typeDefs, resolvers });
+  app = new ApolloServer({ typeDefs, resolvers });
   await app.listen(port);
   console.info(`Server executing on port ${port}`);
 }

@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { setup } from "../setup";
+import { app, setup } from "../setup";
 
 before(async () => {
   await setup();
@@ -7,7 +7,8 @@ before(async () => {
 
 after(async () => {
   await AppDataSource.destroy();
-  console.info("Connection to database closed!");
+  app.stop();
+  console.info("Connection with server closed!");
 });
 
 require("./hello.test");
