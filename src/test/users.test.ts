@@ -32,12 +32,13 @@ describe("Query Users", () => {
   `;
   let input: { limit: number; offset: number };
 
-  it("should return users", async () => {
+  it("should return first page users", async () => {
     const token = jwt.sign({ userId: users[0].id }, process.env.TOKEN_KEY);
     input = {
       limit: 10,
       offset: 0,
     };
+
     const response = await axios.post(
       urlDB,
       {
@@ -53,11 +54,130 @@ describe("Query Users", () => {
       }
     );
 
-    expect(response.status).to.be.deep.eq(200);
-    expect(response.data.data.users.totalUsers).to.be.deep.eq(25);
+    const expectedResponse = await dataSource.find(User, {
+      order: {
+        name: "ASC",
+      },
+      take: input.limit,
+      skip: input.offset,
+      select: { id: true, name: true },
+    });
+    expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
+    expect(response.status).to.eq(200);
+    expect(response.data.data.users.totalUsers).to.eq(25);
+    expect(response.data.data.users.hasPreviousPage).to.eq(false);
+    expect(response.data.data.users.hasNextPage).to.eq(true);
   });
 
-  it("should return invalid or not found token, tokenInvalid", async () => {
+  it("should return midlle page users", async () => {
+    const token = jwt.sign({ userId: users[0].id }, process.env.TOKEN_KEY);
+    input = {
+      limit: 10,
+      offset: 10,
+    };
+
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: query,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    const expectedResponse = await dataSource.find(User, {
+      order: {
+        name: "ASC",
+      },
+      take: input.limit,
+      skip: input.offset,
+      select: { id: true, name: true },
+    });
+    expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
+    expect(response.status).to.eq(200);
+    expect(response.data.data.users.totalUsers).to.eq(25);
+    expect(response.data.data.users.hasPreviousPage).to.eq(true);
+    expect(response.data.data.users.hasNextPage).to.eq(true);
+  });
+
+  it("should return last page users", async () => {
+    const token = jwt.sign({ userId: users[0].id }, process.env.TOKEN_KEY);
+    input = {
+      limit: 10,
+      offset: 20,
+    };
+
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: query,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    const expectedResponse = await dataSource.find(User, {
+      order: {
+        name: "ASC",
+      },
+      take: input.limit,
+      skip: input.offset,
+      select: { id: true, name: true },
+    });
+    expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
+    expect(response.status).to.eq(200);
+    expect(response.data.data.users.totalUsers).to.eq(25);
+    expect(response.data.data.users.hasPreviousPage).to.eq(true);
+    expect(response.data.data.users.hasNextPage).to.eq(false);
+  });
+
+  it("should return not found more users", async () => {
+    const token = jwt.sign({ userId: users[0].id }, process.env.TOKEN_KEY);
+    input = {
+      limit: 10,
+      offset: 25,
+    };
+
+    const response = await axios.post(
+      urlDB,
+      {
+        variables: {
+          data: input,
+        },
+        query: query,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    const expectedResponse = {
+      message: "Não há mais usuarios a serem listados",
+      code: 404,
+    };
+    expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
+      expectedResponse.code
+    );
+    expect(response.data.errors[0].message).to.be.deep.eq(
+      expectedResponse.message
+    );
+  });
+
+  it("should return invalid or not found token - Token Invalid", async () => {
     const response = await axios.post(
       urlDB,
       {
@@ -72,6 +192,27 @@ describe("Query Users", () => {
         },
       }
     );
+
+    const expectedResponse = {
+      message:
+        "Token invalido ou não encontrado, você não possui permissão para ver a lista de usuários.",
+      code: 401,
+    };
+    expect(response.data.errors[0].extensions.exception.code).to.be.deep.eq(
+      expectedResponse.code
+    );
+    expect(response.data.errors[0].message).to.be.deep.eq(
+      expectedResponse.message
+    );
+  });
+
+  it("should return invalid or not found token - dont send token", async () => {
+    const response = await axios.post(urlDB, {
+      variables: {
+        data: input,
+      },
+      query: query,
+    });
 
     const expectedResponse = {
       message:

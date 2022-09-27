@@ -25,6 +25,7 @@ describe("Query User", () => {
         }
         }
       `;
+
   let input = {
     id: 1,
   };
