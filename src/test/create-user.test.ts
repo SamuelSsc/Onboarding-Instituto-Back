@@ -1,7 +1,7 @@
 import axios from "axios";
 import { expect } from "chai";
 import { ClearDb, dataSource } from "../data-source";
-import { User } from "../entity/User";
+import { User } from "../entity";
 import * as bcrypt from "bcrypt";
 import { CreateUser } from "../utils/create-user";
 import * as jwt from "jsonwebtoken";

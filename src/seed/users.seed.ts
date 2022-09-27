@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { dataSource } from "../data-source";
 import * as bcrypt from "bcrypt";
-import { User } from "../entity/User";
+import { User } from "../entity";
 
 export async function usersSeed() {
   const users = [];

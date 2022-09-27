@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User } from "../entity/User";
+import { User } from "../entity";
 import { ClearDb, dataSource } from "../data-source";
 import { expect } from "chai";
 import * as jwt from "jsonwebtoken";

@@ -1,8 +1,8 @@
 import { dataSource } from "../data-source";
-import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import { CustomError } from "../errors";
 import * as jwt from "jsonwebtoken";
+import { User } from "../entity";
 
 export const resolvers = {
   Query: {
