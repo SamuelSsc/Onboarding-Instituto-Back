@@ -6,7 +6,7 @@ import { User } from "./entity/User";
 const isTest = process.env.TEST;
 dotenv.config(isTest && { path: __dirname + "/../test.env" });
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: "postgres",
   host: "localhost",
   url: process.env.DB_URL,
