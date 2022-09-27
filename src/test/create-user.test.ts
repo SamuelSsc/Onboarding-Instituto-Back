@@ -63,9 +63,12 @@ describe("Mutation createUser", () => {
     };
     expect(response.status).to.eq(200);
     expect(response.data).to.be.deep.eq(expectedResponse);
-    expect(userDb.name).to.eq(expectedResponse.data.createUser.name);
-    expect(userDb.email).to.eq(expectedResponse.data.createUser.email);
-    expect(userDb.birthDate).to.eq(expectedResponse.data.createUser.birthDate);
+    expect({
+      id: userDb.id,
+      email: userDb.email,
+      name: userDb.name,
+      birthDate: userDb.birthDate,
+    }).to.be.deep.eq(expectedResponse.data.createUser);
     expect(passwordCompare).to.eq(true);
   });
 
