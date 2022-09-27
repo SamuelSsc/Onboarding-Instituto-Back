@@ -18,6 +18,11 @@ export const typeDefs = gql`
     id: Int!
   }
 
+  input UsersPagination {
+    limit: Int
+    offset: Int
+  }
+
   type User {
     id: Int
     name: String!
@@ -25,14 +30,22 @@ export const typeDefs = gql`
     birthDate: String!
   }
 
-  type Query {
-    hello: String
-    user(data: UserInfo!): User
-  }
-
   type Login {
     user: User!
     token: String!
+  }
+
+  type UsersList {
+    hasPreviousPage: Boolean
+    hasNextPage: Boolean
+    users: [User]
+    totalUsers: Int
+  }
+
+  type Query {
+    hello: String
+    user(data: UserInfo!): User
+    users(data: UsersPagination): UsersList
   }
 
   type Mutation {
