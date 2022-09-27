@@ -1,5 +1,5 @@
 import { dataSource } from "../data-source";
-import { User } from "../entity/User";
+import { User } from "../entity";
 import * as bcrypt from "bcrypt";
 
 interface CreateUserProps {

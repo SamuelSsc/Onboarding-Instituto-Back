@@ -3,7 +3,7 @@ import { expect } from "chai";
 import * as jwt from "jsonwebtoken";
 import axios from "axios";
 import { usersSeed } from "../seed/users.seed";
-import { User } from "../entity/User";
+import { User } from "../entity";
 
 describe("Query Users", () => {
   let users: User[];
