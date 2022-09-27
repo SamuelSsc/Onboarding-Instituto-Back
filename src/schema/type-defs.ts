@@ -23,11 +23,23 @@ export const typeDefs = gql`
     offset: Int
   }
 
+  type Address {
+    id: Int!
+    cep: String!
+    street: String!
+    streetNumber: Int!
+    neighborhood: String!
+    city: String!
+    state: String!
+    complement: String
+  }
+
   type User {
     id: Int
     name: String!
     email: String!
     birthDate: String!
+    addresses: [Address]
   }
 
   type Login {
