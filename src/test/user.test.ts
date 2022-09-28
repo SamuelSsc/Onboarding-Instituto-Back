@@ -1,36 +1,55 @@
 import axios from "axios";
-import { User } from "../entity";
+import { Address, User } from "../entity";
 import { ClearDb, dataSource } from "../data-source";
 import { expect } from "chai";
 import * as jwt from "jsonwebtoken";
-import { CreateUser, defaultUser } from "../utils/create-user";
+import { CreateUser, defaultAdress, defaultUser } from "../utils/create-user";
 
 describe("Query User", () => {
   afterEach(async function () {
     await ClearDb();
   });
 
+  const address1 = new Address();
   beforeEach(async function () {
-    await CreateUser({});
+    address1.state = "São Paulo";
+    address1.city = "São Paulo";
+    address1.neighborhood = "Sumaré";
+    address1.cep = "00000-000";
+    address1.street = "Av. Dr. Arnaldo";
+    address1.streetNumber = 2194;
+    address1.complement = "Taqtile";
+    await CreateUser({ addressess: [address1] });
   });
 
   const urlDB = "http://localhost:4000//graphql";
   const query = `
-        query user($data:UserInfo!){
+      query user($data:UserInfo!){
         user(data: $data){
-            id
-            name
-            email
-            birthDate
+          id
+          name
+          email
+          birthDate
+          addresses{
+            cep
+            street
+            streetNumber
+            neighborhood
+            city
+            state
+            complement
+          }
         }
-        }
+      }
       `;
 
   let input = {
     id: 1,
   };
+  const addressess = [];
 
   it("should return user", async () => {
+    addressess.push(address1, defaultAdress);
     const userDB = await dataSource.findOneBy(User, {
       email: defaultUser.email,
     });
@@ -59,6 +78,7 @@ describe("Query User", () => {
           name: userDB.name,
           email: userDB.email,
           birthDate: userDB.birthDate,
+          addresses: addressess,
         },
       },
     };

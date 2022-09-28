@@ -13,7 +13,7 @@ export class Address {
   street: string;
 
   @Column()
-  streetNumber: string;
+  streetNumber: number;
 
   @Column({ nullable: true })
   complement?: string;

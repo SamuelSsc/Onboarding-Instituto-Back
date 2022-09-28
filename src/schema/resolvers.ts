@@ -20,8 +20,9 @@ export const resolvers = {
           );
         }
       });
-      const user = await dataSource.findOneBy(User, {
-        id: args.data.id,
+      const user = await dataSource.findOne(User, {
+        relations: { addresses: true },
+        where: { id: args.data.id },
       });
 
       if (user === null) {
@@ -58,6 +59,7 @@ export const resolvers = {
         },
         take: limit,
         skip: offset,
+        relations: { addresses: true },
       });
       const totalUsers = await dataSource.count(User);
       const totalPages = Math.ceil(totalUsers / limit);

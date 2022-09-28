@@ -20,13 +20,16 @@ describe("Query Users", () => {
   const query = `
     query users($data:UsersPagination){
         users(data: $data){
-            users{
+          users{
             id
             name
+            addresses{
+              id
             }
-            hasNextPage
-            hasPreviousPage
-            totalUsers
+          }
+          hasNextPage
+          hasPreviousPage
+          totalUsers
         }
     }
   `;
@@ -60,7 +63,8 @@ describe("Query Users", () => {
       },
       take: input.limit,
       skip: input.offset,
-      select: { id: true, name: true },
+      relations: { addresses: true },
+      select: { id: true, name: true, addresses: { id: true } },
     });
     expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
     expect(response.status).to.eq(200);
@@ -97,7 +101,8 @@ describe("Query Users", () => {
       },
       take: input.limit,
       skip: input.offset,
-      select: { id: true, name: true },
+      relations: { addresses: true },
+      select: { id: true, name: true, addresses: { id: true } },
     });
     expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
     expect(response.status).to.eq(200);
@@ -134,7 +139,8 @@ describe("Query Users", () => {
       },
       take: input.limit,
       skip: input.offset,
-      select: { id: true, name: true },
+      relations: { addresses: true },
+      select: { id: true, name: true, addresses: { id: true } },
     });
     expect(response.data.data.users.users).to.be.deep.eq(expectedResponse);
     expect(response.status).to.eq(200);

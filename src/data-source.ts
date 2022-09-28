@@ -24,5 +24,5 @@ export async function createConnection() {
 export const dataSource = AppDataSource.manager;
 
 export async function ClearDb() {
-  await dataSource.query('TRUNCATE TABLE "user"');
+  await dataSource.query('TRUNCATE TABLE "user" RESTART IDENTITY CASCADE');
 }
