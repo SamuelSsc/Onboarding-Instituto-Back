@@ -3,19 +3,29 @@ import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 
 interface CreateUserProps {
-  name: string;
-  email: string;
-  birthDate: string;
-  password: string;
+  name?: string;
+  email?: string;
+  birthDate?: string;
+  password?: string;
 }
+
+const defaultUser = {
+  name: "Samuel Santana",
+  email: "Samuelssc5874@gmail.com",
+  birthDate: "21/2002",
+  password: "1234qwer",
+};
 
 export async function CreateUser(props: CreateUserProps) {
   const ROUNDS = 10;
-  const passwordHashed = await bcrypt.hash(props.password, ROUNDS);
+  const passwordHashed = await bcrypt.hash(
+    props.password ?? defaultUser.password,
+    ROUNDS
+  );
   const user = new User();
-  user.name = props.name;
-  user.email = props.email;
-  user.birthDate = props.birthDate;
+  user.name = props.name ?? defaultUser.name;
+  user.email = props.email ?? defaultUser.email;
+  user.birthDate = props.birthDate ?? defaultUser.birthDate;
   user.password = passwordHashed;
   await dataSource.save(user);
 }

@@ -2,13 +2,33 @@ import { dataSource } from "../data-source";
 import { User } from "../entity/User";
 import * as bcrypt from "bcrypt";
 import { CustomError } from "../errors";
+import * as jwt from "jsonwebtoken";
 
 export const resolvers = {
   Query: {
     hello: () => "Hello Word!",
   },
   Mutation: {
-    createUser: async (parent, args) => {
+    createUser: async (
+      parent,
+      args: {
+        data: {
+          name: string;
+          email: string;
+          password: string;
+          birthDate: string;
+        };
+      },
+      context: { token: string }
+    ) => {
+      jwt.verify(context.token, process.env.TOKEN_KEY, function (err) {
+        if (!!err) {
+          throw new CustomError(
+            "Token invalido ou não encontrado, por favor refaça o Login para ter permissão de criar um novo usuário.",
+            401
+          );
+        }
+      });
       const regex = /^((?=\S*?[a-z,A-Z])(?=\S*?[0-9]).{6,})\S/;
       if (!regex.test(args.data.password))
         throw new CustomError(
@@ -33,6 +53,53 @@ export const resolvers = {
       await dataSource.save(user);
 
       return user;
+    },
+
+    login: async (
+      parent,
+      args: {
+        data: {
+          email: string;
+          password: string;
+          rememberMe: boolean;
+        };
+      }
+    ) => {
+      const userLogin = new User();
+      userLogin.email = args.data.email;
+      userLogin.password = args.data.password;
+      const isRememberMe = args.data.rememberMe;
+      const UnauthorizedError = {
+        message: "Credenciais invalidas, por favor verifique email e senha.",
+        code: 401,
+      };
+
+      const user = await dataSource.findOneBy(User, {
+        email: args.data.email,
+      });
+      if (user === null)
+        throw new CustomError(
+          UnauthorizedError.message,
+          UnauthorizedError.code
+        );
+
+      const isUserPassword = await bcrypt.compare(
+        userLogin.password,
+        user.password
+      );
+      let token: string;
+      if (isUserPassword) {
+        token = jwt.sign({ userId: user.id }, process.env.TOKEN_KEY, {
+          expiresIn: isRememberMe ? "7d" : "3h",
+        });
+      } else {
+        throw new CustomError(
+          UnauthorizedError.message,
+          UnauthorizedError.code
+        );
+      }
+
+      return { user, token };
     },
   },
 };
